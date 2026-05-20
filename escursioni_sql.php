@@ -16,3 +16,13 @@ CREATE TABLE `e107_escursioni` (
   FULLTEXT (`escursioni_name`),
   FULLTEXT (`escursioni_folder`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+CREATE TABLE `e107_escursioni_selezioni` (
+  `sel_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `sel_slug` varchar(190) NOT NULL DEFAULT '',
+  `sel_title` varchar(255) NOT NULL DEFAULT '',
+  `sel_ids` text NOT NULL,
+  `sel_datestamp` int(10) unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`sel_id`),
+  UNIQUE KEY `sel_slug` (`sel_slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;

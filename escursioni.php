@@ -29,8 +29,47 @@ class escursioni_front
         // Stampiamo l'apertura del template grafico
         $text .= $tp->parseTemplate($template['start'], true, $sc);
 
-        // Interroghiamo la tabella escursioni ordinando per ID decrescente
-        if($rows = $sql->retrieve('escursioni', '*', 'ORDER BY ex_id DESC', true))
+        // LOGICA DI FILTRO DINAMICA
+        $where_clause = "1"; // Di base mostra tutto
+
+        if(!empty($_GET['sel']))
+        {
+            $clean_sel = preg_replace('/[^A-Za-z0-9-]/', '', $_GET['sel']);
+            $selection = $sql->retrieve('escursioni_selezioni', 'sel_ids, sel_title', "WHERE sel_slug='".$sql->escape($clean_sel)."'");
+
+            if(!empty($selection['sel_ids']))
+            {
+                $clean_ids = preg_replace('/[^0-9,]/', '', $selection['sel_ids']);
+
+                if(!empty($clean_ids))
+                {
+                    $where_clause = "ex_id IN ({$clean_ids})";
+                }
+            }
+        }
+        elseif(!empty($_GET['id']))
+        {
+            $where_clause = "ex_id = " . (int) $_GET['id'];
+        }
+        elseif(!empty($_GET['type']))
+        {
+            $clean_type = rawurldecode($_GET['type']);
+            if(!empty($clean_type))
+            {
+                $where_clause = "ex_type = '" . $sql->escape($clean_type) . "'";
+            }
+        }
+        elseif(!empty($_GET['ids']))
+        {
+            $clean_ids = preg_replace('/[^0-9,]/', '', $_GET['ids']);
+            if(!empty($clean_ids))
+            {
+                $where_clause = "ex_id IN ({$clean_ids})";
+            }
+        }
+
+        // Interroghiamo la tabella escursioni applicando il nostro filtro (o tutto se vuoto)
+        if($rows = $sql->retrieve('escursioni', '*', "WHERE {$where_clause} ORDER BY ex_id DESC", true))
         {
             foreach($rows as $key => $value)
             {
@@ -43,7 +82,7 @@ class escursioni_front
         }
         else
         {
-            $text .= "<div class='alert alert-info text-center'>Nessuna escursione disponibile al momento.</div>";
+            $text .= "<div class='alert alert-info text-center'>Nessuna escursione disponibile per questa categoria.</div>";
         }
 
         // Stampiamo la chiusura del template grafico

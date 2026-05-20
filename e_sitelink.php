@@ -25,6 +25,15 @@ if (!defined('e107_INIT')) { exit; }
 
 class escursioni_sitelink // include plugin-folder in the name.
 {
+	private function slug($text)
+	{
+		$text = html_entity_decode((string) $text, ENT_QUOTES, 'UTF-8');
+		$text = preg_replace('/[^A-Za-z0-9]+/', '-', $text);
+		$text = trim($text, '-');
+
+		return strtolower($text);
+	}
+
 	function config()
 	{
 		global $pref;
@@ -78,15 +87,18 @@ class escursioni_sitelink // include plugin-folder in the name.
 		$tp = e107::getParser();
 		$sublinks = array();
 		
-		$sql->select("escursioni","*","escursioni_id != '' ");
+		$sql->select("escursioni", "*", "ex_id > 0 ORDER BY ex_title ASC");
 		
 		while($row = $sql->fetch())
 		{
 			$sublinks[] = array(
-				'link_name'			=> $tp->toHTML($row['escursioni_name'],'','TITLE'),
-				'link_url'			=> e107::url('escursioni', 'other', $row),
+				'link_name'			=> $tp->toHTML($row['ex_title'], '', 'TITLE'),
+				'link_url'			=> e107::url('escursioni', 'view', array(
+					'ex_id'    => (int) $row['ex_id'],
+					'ex_title' => $this->slug($row['ex_title'])
+				)),
 				'link_description'	=> '',
-				'link_button'		=> $row['escursioni_icon'],
+				'link_button'		=> vartrue($row['ex_image1']),
 				'link_category'		=> '',
 				'link_order'		=> '',
 				'link_parent'		=> '',
