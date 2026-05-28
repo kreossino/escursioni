@@ -83,6 +83,11 @@ class escursioni_ui extends e_admin_ui
 			{
 				$this->handleSelectionFormSubmit();
 			}
+
+			if(!empty($_GET['escursioni_delete_selection']))
+			{
+				$this->handleSelectionDelete();
+			}
 			
 			$pref = e107::getPlugPref('escursioni');
 			
@@ -100,6 +105,7 @@ class escursioni_ui extends e_admin_ui
 			$this->fields['ex_difficulty']['writeParms']['optArray'] = array_combine(array_map('trim', $diff_arr), array_map('trim', $diff_arr)); 
 			
 			$this->viewURL = e107::url('escursioni', 'view', array('ex_id' => '--ID--', 'ex_title' => '--TITLE--'));
+			$this->preFilterMarkup = $this->renderSelectionManager();
 		}
 
 		protected function escursioniSlug($text)
@@ -269,6 +275,91 @@ class escursioni_ui extends e_admin_ui
 			}
 		}
 
+		protected function handleSelectionDelete()
+		{
+			$id = (int) $_GET['escursioni_delete_selection'];
+
+			if($id < 1)
+			{
+				return;
+			}
+
+			$token = vartrue($_GET['e-token']);
+
+			if(empty($token) || $token !== defset('e_TOKEN'))
+			{
+				e107::getMessage()->addError('Token non valido: link selezione non eliminato.');
+				return;
+			}
+
+			$sql = e107::getDb();
+
+			if($sql->delete('escursioni_selezioni', 'sel_id='.(int) $id))
+			{
+				e107::getMessage()->addSuccess('Link selezione eliminato.');
+			}
+			else
+			{
+				e107::getMessage()->addError('Non riesco a eliminare il link selezione: '.$sql->getLastErrorText());
+			}
+		}
+
+		protected function renderSelectionManager()
+		{
+			$sql = e107::getDb();
+			$tp = e107::getParser();
+
+			$text = "<div class='panel panel-default card mb-3'>";
+			$text .= "<div class='panel-heading card-header'><strong>Link selezione creati</strong></div>";
+			$text .= "<div class='panel-body card-body'>";
+
+			$rows = $sql->retrieve('escursioni_selezioni', 'sel_id, sel_slug, sel_title, sel_ids, sel_datestamp', "sel_slug != '' ORDER BY sel_datestamp DESC, sel_title ASC", true);
+
+			if(empty($rows))
+			{
+				$text .= "<p class='text-muted'>Nessun link selezione creato.</p>";
+				$text .= "</div></div>";
+				return $text;
+			}
+
+			$text .= "<div class='table-responsive overflow-auto border p-3' style='max-height:250px;'>";
+			$text .= "<table class='table table-striped table-bordered'>";
+			$text .= "<thead><tr>";
+			$text .= "<th>Nome</th>";
+			$text .= "<th>URL</th>";
+			$text .= "<th class='text-center'>Records</th>";
+			$text .= "<th>Creato</th>";
+			$text .= "<th class='text-center'>Opzioni</th>";
+			$text .= "</tr></thead><tbody>";
+
+			foreach($rows as $row)
+			{
+				$id = (int) $row['sel_id'];
+				$title = $tp->toHTML(vartrue($row['sel_title']), true, 'TITLE');
+				$url = $this->getSelectedFrontendUrl($row['sel_slug']);
+				$safeUrl = $tp->toAttribute($url);
+				$count = count($this->getSelectedIds(explode(',', vartrue($row['sel_ids']))));
+				$date = !empty($row['sel_datestamp']) ? date('Y-m-d H:i', (int) $row['sel_datestamp']) : '';
+				$deleteUrl = e_SELF.'?mode=main&amp;action=list&amp;escursioni_delete_selection='.$id.'&amp;e-token='.defset('e_TOKEN');
+
+				$text .= "<tr>";
+				$text .= "<td>".$title."</td>";
+				$text .= "<td><input type='text' class='form-control input-sm' value='".$safeUrl."' readonly onclick='this.select()' /></td>";
+				$text .= "<td class='text-center'>".$count."</td>";
+				$text .= "<td>".$tp->toHTML($date)."</td>";
+				$text .= "<td class='text-center'>";
+				$text .= "<a class='btn btn-xs btn-default btn-secondary' href='".$safeUrl."' target='_blank' rel='noopener'>Apri</a> ";
+				$text .= "<a class='btn btn-xs btn-danger' href='".$deleteUrl."' onclick=\"return confirm('Eliminare questo link selezione?');\">Elimina</a>";
+				$text .= "</td>";
+				$text .= "</tr>";
+			}
+
+			$text .= "</tbody></table>";
+			$text .= "</div></div></div>";
+
+			return $text;
+		}
+
 		protected function handleListLinkSelezioneBatch($selected, $value = null)
 		{
 			return $this->renderSelectionNameForm($selected);
@@ -342,7 +433,7 @@ class escursioni_form_ui extends e_admin_form_ui
 
 		$url = e107::url('escursioni', 'view', array(
 			'ex_id'    => (int) $row['ex_id'],
-			'ex_title' => $this->escursioniSlug(vartrue($row['ex_title']))
+			'ex_title' => $this->escursioniSlug(vartrue($row['ex_sef']) ?: vartrue($row['ex_title']))
 		));
 
 		$title = e107::getParser()->toAttribute(vartrue($row['ex_title']));

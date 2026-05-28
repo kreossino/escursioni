@@ -35,7 +35,7 @@ class escursioni_related // include plugin-folder in the name.
 
 				$items[] = array(
 					'title'			=> varset($row['escursioni_title']),
-					'url'			=> e107::url('other',$row), // '{e_BASE}news.php?extend.'.$row['news_id'],
+					'url'			=> e107::getUrl()->create('escursioni/other/index'),
 					'summary'		=> varset($row['escursioni_summary']),
 					'image'			=> '{e_PLUGIN}escursioni/images/image.png'
 				);
@@ -50,6 +50,5 @@ class escursioni_related // include plugin-folder in the name.
 	}
 	
 }
-
 
 

@@ -1,6 +1,7 @@
 CREATE TABLE `e107_escursioni` (
   `ex_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `ex_title` varchar(255) NOT NULL DEFAULT '',
+  `ex_sef` varchar(255) NOT NULL DEFAULT '',
   `ex_text` text NOT NULL,
   `ex_image1` varchar(255) NOT NULL DEFAULT '',
   `ex_image2` varchar(255) NOT NULL DEFAULT '',

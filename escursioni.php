@@ -22,15 +22,15 @@ class escursioni_front
 
         // Inizializziamo il blocco degli shortcodes del plugin
         $sc = e107::getScBatch('escursioni', true, 'escursioni');
-        
-        // Carichiamo il template grafico 'default' definito dentro escursioni_template.php
-        $template = e107::getTemplate('escursioni', 'escursioni', 'default');
-
-        // Stampiamo l'apertura del template grafico
-        $text .= $tp->parseTemplate($template['start'], true, $sc);
 
         // LOGICA DI FILTRO DINAMICA
         $where_clause = "1"; // Di base mostra tutto
+        $single_view = false;
+
+        if(empty($_GET['id']) && !empty($_SERVER['REQUEST_URI']) && preg_match('#/escursioni/([0-9]+)/#', $_SERVER['REQUEST_URI'], $match))
+        {
+            $_GET['id'] = (int) $match[1];
+        }
 
         if(!empty($_GET['sel']))
         {
@@ -50,6 +50,7 @@ class escursioni_front
         elseif(!empty($_GET['id']))
         {
             $where_clause = "ex_id = " . (int) $_GET['id'];
+            $single_view = true;
         }
         elseif(!empty($_GET['type']))
         {
@@ -68,8 +69,15 @@ class escursioni_front
             }
         }
 
+        $rows = $sql->retrieve('escursioni', '*', "WHERE {$where_clause} ORDER BY ex_id DESC", true);
+        $templateKey = $single_view ? 'single' : 'default';
+        $template = e107::getTemplate('escursioni', 'escursioni', $templateKey);
+
+        // Stampiamo l'apertura del template grafico
+        $text .= $tp->parseTemplate($template['start'], true, $sc);
+
         // Interroghiamo la tabella escursioni applicando il nostro filtro (o tutto se vuoto)
-        if($rows = $sql->retrieve('escursioni', '*', "WHERE {$where_clause} ORDER BY ex_id DESC", true))
+        if(!empty($rows))
         {
             foreach($rows as $key => $value)
             {

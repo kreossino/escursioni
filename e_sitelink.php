@@ -95,7 +95,7 @@ class escursioni_sitelink // include plugin-folder in the name.
 				'link_name'			=> $tp->toHTML($row['ex_title'], '', 'TITLE'),
 				'link_url'			=> e107::url('escursioni', 'view', array(
 					'ex_id'    => (int) $row['ex_id'],
-					'ex_title' => $this->slug($row['ex_title'])
+					'ex_title' => $this->slug(vartrue($row['ex_sef']) ?: $row['ex_title'])
 				)),
 				'link_description'	=> '',
 				'link_button'		=> vartrue($row['ex_image1']),
@@ -105,6 +105,24 @@ class escursioni_sitelink // include plugin-folder in the name.
 				'link_open'			=> '',
 				'link_class'		=> e_UC_PUBLIC
 			);
+		}
+
+		if($sql->select("escursioni_selezioni", "sel_slug, sel_title", "sel_slug != '' ORDER BY sel_title ASC"))
+		{
+			while($row = $sql->fetch())
+			{
+				$sublinks[] = array(
+					'link_name'			=> $tp->toHTML($row['sel_title'], '', 'TITLE'),
+					'link_url'			=> e107::url('escursioni', 'selezione', array('sel_slug' => $row['sel_slug'])),
+					'link_description'	=> '',
+					'link_button'		=> '',
+					'link_category'		=> '',
+					'link_order'		=> '',
+					'link_parent'		=> '',
+					'link_open'			=> '',
+					'link_class'		=> e_UC_PUBLIC
+				);
+			}
 		}
 		
 		return $sublinks;
