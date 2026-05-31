@@ -104,39 +104,34 @@ $ESCURSIONI_TEMPLATE['single']['end'] = '
 // ==========================================
 
 // Apertura del contenitore del menu (es: una lista compatta)
+// Apertura del contenitore del menu
 $ESCURSIONI_TEMPLATE['menu']['start'] = '
-<div class="escursioni-menu-list list-group list-group-flush">
+<div class="escursioni-menu-list list-group list-group-flush card my-3 p-3 bg-light">
 ';
 
-// Singolo elemento del menu (compatto, con titolo, tipo e link rapido)
+// Singolo elemento del menu
 $ESCURSIONI_TEMPLATE['menu']['item'] = '
-<a href="{ESCURSIONI_LINK}" class="list-group-item list-group-item-action py-3 mt-2 px-0 border-bottom escursioni-menu-item">
-    <!-- Titolo sempre a tutta larghezza in alto -->
+<a href="{ESCURSIONI_LINK}" class="list-group-item list-group-item-action py-4 px-0 border-bottom escursioni-menu-item" style="background: transparent;">
     <div class="w-100 mb-2">
         <h5 class="h6 text-warning fw-bold p-2 bg-dark center rounded-top-5" style="margin:0;">{ESCURSIONI_TITLE}</h5>
     </div>
     
-
-
-<div class="row g-2">
-        
-    <div class="col-12 col-md-2">
-        <div class="d-flex flex-column gap-1 align-items-start w-100">
-            <span class="badge bg-info text-dark w-100 text-start text-truncate" style="font-size: 0.72rem; padding: 0.35em 0.5em;">{ESCURSIONI_TYPE}</span>
-            <span class="badge bg-light text-dark border w-100 text-start text-truncate" style="font-size: 0.72rem; padding: 0.35em 0.5em;"><i class="far fa-clock"></i> {ESCURSIONI_DURATION}</span>
-            <span class="badge bg-warning text-dark w-100 text-start text-truncate" style="font-size: 0.72rem; padding: 0.35em 0.5em;"><i class="fas fa-mountain"></i> {ESCURSIONI_DIFFICULTY}</span>
+    <div class="row g-2">
+        <div class="col-12 col-md-2">
+            <div class="d-flex flex-column gap-1 align-items-start w-100">
+                <span class="badge bg-info text-dark w-100 text-start text-truncate" style="font-size: 0.72rem; padding: 0.35em 0.5em;">{ESCURSIONI_TYPE}</span>
+                <span class="badge bg-light text-dark border w-100 text-start text-truncate" style="font-size: 0.72rem; padding: 0.35em 0.5em;"><i class="far fa-clock"></i> {ESCURSIONI_DURATION}</span>
+                <span class="badge bg-warning text-dark w-100 text-start text-truncate" style="font-size: 0.72rem; padding: 0.35em 0.5em;"><i class="fas fa-mountain"></i> {ESCURSIONI_DIFFICULTY}</span>
+            </div>
         </div>
-    </div>
-    
-    <div class="col-12 col-md-4 escursioni-menu-img">
-        {ESCURSIONI_IMAGE1}
-    </div>
-    
-    <div class="col-12 col-md-6 bg-dark text-white p-2 rounded-end">
-        <p class="mb-0 lead" style="line-height: 1.3; margin:0;">{ESCURSIONI_SHORT_TEXT}</p>
-    </div>
         
-</div>
+        <div class="col-12 col-md-4 escursioni-menu-img">
+            {ESCURSIONI_IMAGE1}
+        </div>
+        
+        <div class="col-12 col-md-6 bg-dark text-white p-2 rounded-end">
+            <p class="mb-0 lead" style="line-height: 1.3; margin:0;">{ESCURSIONI_SHORT_TEXT}</p>
+        </div>
     </div>
 </a>
 ';
@@ -145,3 +140,5 @@ $ESCURSIONI_TEMPLATE['menu']['item'] = '
 $ESCURSIONI_TEMPLATE['menu']['end'] = '
 </div>
 ';
+
+
