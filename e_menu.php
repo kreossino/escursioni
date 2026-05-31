@@ -1,59 +1,30 @@
 <?php
-/*
- * e107 website system
- *
- * Copyright (C) 2008-2015 e107 Inc (e107.org)
- * Released under the terms and conditions of the
- * GNU General Public License (http://www.gnu.org/licenses/gpl.txt)
- *
- *
-*/
-
 if (!defined('e107_INIT')) { exit; }
 
-//v2.x Standard for extending menu configuration within Menu Manager. (replacement for v1.x config.php)
-	
 class escursioni_menu
 {
-	function __construct()
-	{
-		// e107::lan('escursioni','menu',true); // English_menu.php or {LANGUAGE}_menu.php
-	}
-
-	/**
-	 * Configuration Fields.
-	 * @return array
-	 */
-	public function config($menu='')
-	{
-
-		$fields = array();
-		$fields['escursioniCaption']      = array('title'=> "Caption", 'type'=>'text', 'multilan'=>true, 'writeParms'=>array('size'=>'xxlarge'));
-		$fields['escursioniCount']        = array('title'=> "Enabled", 'type'=>'number');
-		$fields['escursioniCustom']       = array('title'=> "Enabled", 'type'=>'method'); // see below.
+    /**
+     * Campi di configurazione nel backend di e107
+     */
+    public function config($menu = '')
+    {
+        $fields = array();
+        
+        // Titolo del menu (es: "Ultime Escursioni")
+        $fields['escursioniCaption'] = array(
+            'title'     => "Titolo del Menu", 
+            'type'      => 'text', 
+            'multilan'  => true, 
+            'writeParms'=> array('size' => 'xxlarge')
+        );
+        
+        // Numero di record da mostrare nella sidebar
+        $fields['escursioniCount'] = array(
+            'title'     => "Numero di escursioni da mostrare", 
+            'type'      => 'number',
+            'writeParms'=> array('default' => 3)
+        );
 
         return $fields;
-
-	}
-
+    }
 }
-
-// optional - for when using custom methods above.
-
-class escursioni_menu_form extends e_form
-{
-
-	function escursioniCustom($curVal)
-	{
-
-		$frm = e107::getForm();
-		$opts = array(1,2,3,4);
-		$frm->select('escursioniCustom', $opts, $curVal);
-
-
-	}
-
-
-}
-
-

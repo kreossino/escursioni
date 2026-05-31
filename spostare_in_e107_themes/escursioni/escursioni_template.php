@@ -95,6 +95,10 @@ $ESCURSIONI_TEMPLATE['single']['item'] = '
 $ESCURSIONI_TEMPLATE['single']['end'] = '
 </div>
 ';
+
+
+
+
 // ==========================================
 // BLOCCO DI LAYOUT PER IL MENU (SIDEBAR)
 // ==========================================
@@ -112,28 +116,27 @@ $ESCURSIONI_TEMPLATE['menu']['item'] = '
         <h5 class="h6 text-warning fw-bold p-2 bg-dark center rounded-top-5" style="margin:0;">{ESCURSIONI_TITLE}</h5>
     </div>
     
-    <!-- Griglia a 3 colonne da md in su, impilate su mobile -->
-    <div class="row g-2 align-items-start">
+
+
+<div class="row g-2">
         
-        <!-- PRIMA COLONNA: Badge incolonnati in verticale e attaccati in alto -->
-        <div class="col-12 col-md-2">
-            <div class="d-flex flex-column gap-1 align-items-start w-100">
-                <span class="badge bg-info text-dark w-100 text-start text-truncate" style="font-size: 0.72rem; padding: 0.35em 0.5em;">{ESCURSIONI_TYPE}</span>
-                <span class="badge bg-light text-dark border w-100 text-start text-truncate" style="font-size: 0.72rem; padding: 0.35em 0.5em;"><i class="far fa-clock text-secondary"></i> {ESCURSIONI_DURATION}</span>
-                <span class="badge bg-warning text-dark w-100 text-start text-truncate" style="font-size: 0.72rem; padding: 0.35em 0.5em;"><i class="fas fa-mountain"></i> {ESCURSIONI_DIFFICULTY}</span>
-            </div>
+    <div class="col-12 col-md-2">
+        <div class="d-flex flex-column gap-1 align-items-start w-100">
+            <span class="badge bg-info text-dark w-100 text-start text-truncate" style="font-size: 0.72rem; padding: 0.35em 0.5em;">{ESCURSIONI_TYPE}</span>
+            <span class="badge bg-light text-dark border w-100 text-start text-truncate" style="font-size: 0.72rem; padding: 0.35em 0.5em;"><i class="far fa-clock"></i> {ESCURSIONI_DURATION}</span>
+            <span class="badge bg-warning text-dark w-100 text-start text-truncate" style="font-size: 0.72rem; padding: 0.35em 0.5em;"><i class="fas fa-mountain"></i> {ESCURSIONI_DIFFICULTY}</span>
         </div>
+    </div>
+    
+    <div class="col-12 col-md-4 escursioni-menu-img">
+        {ESCURSIONI_IMAGE1}
+    </div>
+    
+    <div class="col-12 col-md-6 bg-dark text-white p-2 rounded-end">
+        <p class="mb-0 lead" style="line-height: 1.3; margin:0;">{ESCURSIONI_SHORT_TEXT}</p>
+    </div>
         
-        <!-- SECONDA COLONNA: Immagine -->
-        <div class="col-12 col-md-4 escursioni-menu-img">
-            {ESCURSIONI_IMAGE1}
-        </div>
-        
-        <!-- TERZA COLONNA: Descrizione breve -->
-        <div class="col-12 col-md-6">
-            <p class="mb-0 text-muted small" style="font-size: 0.85rem; line-height: 1.3; margin:0;">{ESCURSIONI_SHORT_TEXT}</p>
-        </div>
-        
+</div>
     </div>
 </a>
 ';

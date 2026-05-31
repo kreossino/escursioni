@@ -10,25 +10,49 @@
  *
  */
 
-
 if (!defined('e107_INIT')) { exit; }
 
-// $sql = e107::getDB(); 				// mysql class object
-// $tp = e107::getParser(); 			// parser for converting to HTML and parsing templates etc.
-// $frm = e107::getForm(); 				// Form element class.
-// $ns = e107::getRender();				// render in theme box.
+// 1. Recuperiamo la configurazione salvata nel backend (impostata tramite e_menu.php)
+// Se usi e107 v2, i parametri vengono passati direttamente nell'array $parm
+$caption = (!empty($parm['escursioniCaption'])) ? $parm['escursioniCaption'] : "Escursioni Consigliate";
+$limit   = (!empty($parm['escursioniCount']))   ? (int)$parm['escursioniCount']   : 3;
 
-$text = "Empty Menu";
+$sql = e107::getDb();
+$tp  = e107::getParser();
+$ns  = e107::getRender();
 
-if(!empty($parm))
+// 2. Inizializziamo il blocco degli shortcode del plugin escursioni
+$sc = e107::getScBatch('escursioni', true, 'escursioni');
+
+// 3. Recuperiamo il pezzo di template 'menu' che abbiamo aggiunto nel file dei template
+$template = e107::getTemplate('escursioni', 'escursioni', 'menu');
+
+$menu_text = "";
+
+// Stampiamo l'apertura della lista (es. <div class='list-group'>)
+$menu_text .= $tp->parseTemplate($template['start'], true, $sc);
+
+// 4. Interroghiamo il database per prendere le ultime X escursioni
+$rows = $sql->retrieve('escursioni', '*', "WHERE 1 ORDER BY ex_id DESC LIMIT 0, {$limit}", true);
+
+if(!empty($rows))
 {
-	$text .= print_a($parm,true); // e_menu.php form data.
+    foreach($rows as $key => $value)
+    {
+        // Passiamo i dati del record corrente agli shortcode ({ESCURSIONI_TITLE}, ecc.)
+        $sc->setVars($value);
+        
+        // Generiamo l'HTML del singolo elemento della sidebar
+        $menu_text .= $tp->parseTemplate($template['item'], true, $sc);
+    }
+}
+else
+{
+    $menu_text .= "<div class='text-muted small text-center py-3'>Nessuna escursione disponibile.</div>";
 }
 
-e107::getRender()->tablerender("escursioni", $text);
+// Stampiamo la chiusura del contenitore
+$menu_text .= $tp->parseTemplate($template['end'], true, $sc);
 
-
-
-
-
-
+// 5. Renderizziamo il blocco finale nella colonna del tuo sito
+$ns->tablerender($caption, $menu_text, 'escursioni_menu');
