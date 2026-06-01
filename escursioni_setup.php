@@ -1,35 +1,18 @@
 <?php
-/*
-* e107 website system
-*
-* Copyright (C) 2008-2013 e107 Inc (e107.org)
-* Released under the terms and conditions of the
-* GNU General Public License (http://www.gnu.org/licenses/gpl.txt)
-*
-* Custom install/uninstall/update routines for escursioni plugin
-**
-*/
+if(!defined('e107_INIT')) { exit; }
 
 if(!class_exists("escursioni_setup"))
 {
     class escursioni_setup
     {
+        function install_pre($var) {}
 
-        function install_pre($var)
-        {
-            // print_a($var);
-            // echo "custom install 'pre' function<br /><br />";
-        }
-
-        /**
-         * For inserting default database content during install after table has been created by the escursioni_sql.php file.
-         */
         function install_post($var)
         {
             $sql = e107::getDb();
             $mes = e107::getMessage();
 
-            // CORRETTO: Adesso l'array usa i campi reali definiti nel tuo escursioni_sql.php
+            // ✅ Usa stringhe dirette: i file lingua NON sono ancora caricati in questa fase
             $e107escursioni = array(
                 'ex_title'          => 'Prima Escursione di Esempio',
                 'ex_text'           => 'Testo descrittivo dell\'escursione di prova.',
@@ -47,53 +30,41 @@ if(!class_exists("escursioni_setup"))
 
             if($sql->insert('escursioni', $e107escursioni))
             {
-                $mes->add("Custom - Install Message.", E_MESSAGE_SUCCESS);
+                // Tenta di caricare la lingua per i messaggi, con fallback sicuro
+                e107::lan('escursioni', 'admin');
+                $msg = vartrue($LAN['escursioni_setup_install_ok'], 'Plugin installato correttamente. Record di esempio inserito.');
+                $mes->add($msg, E_MESSAGE_SUCCESS);
             }
             else
             {
                 $message = $sql->getLastErrorText();
-                $mes->add("Custom - Failed to add default table data.", E_MESSAGE_ERROR);
+                e107::lan('escursioni', 'admin');
+                $msg = vartrue($LAN['escursioni_setup_install_ko'], 'Errore durante l\'inserimento dei dati di esempio.');
+                $mes->add($msg, E_MESSAGE_ERROR);
                 $mes->add($message, E_MESSAGE_ERROR);
             }
-
         }
 
         function uninstall_options()
         {
-            $listoptions = array(0=>'option 1',1=>'option 2');
-
+            e107::lan('escursioni', 'admin');
+            $listoptions = array(
+                0 => vartrue($LAN['escursioni_setup_un_opt1'], 'Mantieni tabelle nel database'),
+                1 => vartrue($LAN['escursioni_setup_un_opt2'], 'Elimina permanentemente tutte le tabelle')
+            );
             $options = array();
             $options['mypref'] = array(
-                    'label'     => 'Custom Uninstall Label',
-                    'preview'   => 'Preview Area',
-                    'helpText'  => 'Custom Help Text',
-                    'itemList'  => $listoptions,
-                    'itemDefault'   => 1
+                'label'       => vartrue($LAN['escursioni_setup_un_label'], 'Opzioni di rimozione dati'),
+                'preview'     => vartrue($LAN['escursioni_setup_un_preview'], 'Anteprima area di rimozione'),
+                'helpText'    => vartrue($LAN['escursioni_setup_un_help'], 'Scegli come gestire i dati associati al plugin durante la disinstallazione.'),
+                'itemList'    => $listoptions,
+                'itemDefault' => 0
             );
-
             return $options;
         }
 
-        function uninstall_post($var)
-        {
-            // print_a($var);
-        }
-
-        /*
-         * Call During Upgrade Check. May be used to check for existance of tables etc and if not found return TRUE to call for an upgrade.
-         *
-         * @return bool true = upgrade required; false = upgrade not required
-         */
-        function upgrade_required()
-        {
-            $legacyMenuPref = e107::getConfig('menu')->getPref();
-            return false;
-        }
-
-        function upgrade_post($var)
-        {
-            // $sql = e107::getDb();
-        }
-
+        function uninstall_post($var) {}
+        function upgrade_required() { return false; }
+        function upgrade_post($var) {}
     }
 }

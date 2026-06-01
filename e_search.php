@@ -1,91 +1,45 @@
 <?php
-/*
- * e107 website system
- *
- * Copyright (C) 2008-2014 e107 Inc (e107.org)
- * Released under the terms and conditions of the
- * GNU General Public License (http://www.gnu.org/licenses/gpl.txt)
- * 
- * escursioni e_search addon 
- */
- 
-
 if (!defined('e107_INIT')) { exit; }
+e107::lan('escursioni', 'front');
 
-// v2.x e_search addon.
-
-
-class escursioni_search extends e_search // include plugin-folder in the name.
+class escursioni_search extends e_search
 {
-		
-	function config()
-	{	
-		$search = array(
-			'name'			=> "Blank Plugin",
-			'table'			=> 'escursioni',
+    function config()
+    {
+        $search = array(
+            'name'		=> $LAN['escursioni_search_modname'],
+            'table'		=> 'escursioni',
+            'advanced' 	=> array(
+                'date'	=> array('type'	=> 'date', 'text' => LAN_DATE_POSTED),
+                'type'	=> array('type'	=> 'dropdown', 'text' => $LAN['escursioni_type'], 'values' => array())
+            ),
+            'return_fields'	=> array('ex_id', 'ex_title', 'ex_text', 'ex_datestamp'),
+            'search_fields'	=> array('ex_title' => '1.5', 'ex_text' => '1.0'),
+            'order'			=> array('ex_datestamp' => 'DESC'),
+            'refpage'		=> 'escursioni.php'
+        );
+        return $search;
+    }
 
-			'advanced' 		=> array(
-								'date'	=> array('type'	=> 'date', 		'text' => LAN_DATE_POSTED),
-								'author'=> array('type'	=> 'author',	'text' => LAN_SEARCH_61)
-							),
-							
-			'return_fields'	=> array('escursioni_id', 'escursioni_name', 'escursioni_folder', 'escursioni_datestamp'),
-			'search_fields'	=> array('escursioni_name' => '1', 'escursioni_folder' => '1'), // fields and weights.
-			
-			'order'			=> array('escursioni_datestamp' => 'DESC'),
-			'refpage'		=> 'chat.php'
-		);
+    function compile($row)
+    {
+        $tp = e107::getParser();
+        $res = array();
+        $res['link'] 		= e107::url('escursioni', 'view', array('ex_id' => (int)$row['ex_id'], 'ex_title' => ''));
+        $res['pre_title'] 	= LAN_SEARCH_7;
+        $res['title'] 		= $tp->toHTML(vartrue($row['ex_title']), true, 'TITLE');
+        $res['summary'] 	= $tp->truncate($tp->toHTML(vartrue($row['ex_text']), true, 'bbcode'), 200);
+        $res['detail'] 		= '';
+        return $res;
+    }
 
-
-		return $search;
-	}
-
-
-
-	/* Compile Database data for output */
-	function compile($row)
-	{
-		$tp = e107::getParser();
-
-		preg_match("/([0-9]+)\.(.*)/", $row['escursioni_nick'], $user);
-
-		$res = array();
-	
-		$res['link'] 		= e_PLUGIN."escursioni_menu/escursioni.php?".$row['escursioni_id'].".fs";
-		$res['pre_title'] 	= LAN_SEARCH_7;
-		$res['title'] 		= $user[2];
-		$res['summary'] 	= $row['escursioni_message'];
-		$res['detail'] 		= $tp->toDate($row['escursioni_datestamp'], "long");
-
-		return $res;
-		
-	}
-
-
-
-	/**
-	 * Optional - Advanced Where
-	 * @param $parm - data returned from $_GET (ie. advanced fields included. in this case 'date' and 'author' )
-	 */
-	function where($parm=null)
-	{
-		$tp = e107::getParser();
-
-		$qry = "";
-		
-		if (vartrue($parm['time']) && is_numeric($parm['time'])) 
-		{
-			$qry .= " escursioni_datestamp ".($parm['on'] == 'new' ? '>=' : '<=')." '".(time() - $parm['time'])."' AND";
-		}
-
-		if (vartrue($parm['author'])) 
-		{
-			$qry .= " escursioni_nick LIKE '%".$tp -> toDB($parm['author'])."%' AND";
-		}
-		
-		return $qry;
-	}
-	
-
+    function where($parm=null)
+    {
+        $tp = e107::getParser();
+        $qry = "";
+        if (vartrue($parm['time']) && is_numeric($parm['time'])) {
+            $qry .= " ex_datestamp ".($parm['on'] == 'new' ? '>=' : '<=')." '".(time() - $parm['time'])."' AND";
+        }
+        return $qry;
+    }
 }
-

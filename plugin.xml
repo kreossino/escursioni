@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<e107Plugin name="escursioni" lan="LAN_ESCURSIONI" version="1.0" date="2026-05-18" compatibility="2.0" installRequired="true" >
-	<author name="kreos" url="https://serverkreos.com" />
-	<summary lan="">plugin escursioni da utilizzare su strutture ricettive</summary>
-	<description lan="">plugin escursioni da utilizzare su strutture ricettive. creato per ceraunavoltabeb.it</description>
-	<keywords>
-		<word>information</word>
-		<word>escursioni</word>
-		<word>ceraunavoltabeb</word>
-	</keywords>
-	<category>content</category>
-	<copyright>kreos</copyright>
-	<adminLinks>
-		<link url="admin_config.php" description="LAN_CONFIGURE" icon="images/icon_32.png" iconSmall="images/icon_16.png" icon128="images/icon_128.png" primary="true" >LAN_CONFIGURE</link>
-	</adminLinks>
-	<pluginPrefs>
-		<pref name='tipo'></pref>
-		<pref name='durata'></pref>
-		<pref name='difficoltà'></pref>
-		<pref name='File'></pref>
-	</pluginPrefs>
+<e107Plugin name="escursioni" lan="LAN_ESCURSIONI_NAME" version="1.0" date="2026-05-18" compatibility="2.0" installRequired="true" >
+    <author name="kreos" url="https://serverkreos.com" />
+    <summary lan="LAN_ESCURSIONI_SUMMARY"></summary>
+    <description lan="LAN_ESCURSIONI_DESCRIPTION"></description>
+    <keywords>
+        <word>information</word>
+        <word>escursioni</word>
+        <word>ceraunavoltabeb</word>
+    </keywords>
+    <category>content</category>
+    <copyright>kreos</copyright>
+    <adminLinks>
+        <link url="admin_config.php" description="LAN_CONFIGURE" icon="images/icon_32.png" iconSmall="images/icon_16.png" icon128="images/icon_128.png" primary="true">LAN_CONFIGURE</link>
+    </adminLinks>
+    <pluginPrefs>
+        <pref name='tipo'></pref>
+        <pref name='durata'></pref>
+        <pref name='difficoltà'></pref>
+        <pref name='File'></pref>
+    </pluginPrefs>
 </e107Plugin>

@@ -1,12 +1,11 @@
 <?php
 if (!defined('e107_INIT')) { exit; }
+e107::lan('escursioni', 'front');
 
-$caption = (!empty($parm['escursioni_menu_caption'])) ? $parm['escursioni_menu_caption'] : "Escursioni Consigliate";
+$caption = (!empty($parm['escursioni_menu_caption'])) ? $parm['escursioni_menu_caption'] : $LAN['escursioni_menu_caption'];
 
-// 1. Recupero sicuro del limite dalle preferenze dell'admin
 $escursioni_prefs = e107::getPlugPref('escursioni');
-$limit = 3; 
-
+$limit = 3;
 if (!empty($escursioni_prefs['escursioni_menu_global_limit'])) {
     $limit = (int)$escursioni_prefs['escursioni_menu_global_limit'];
 } elseif (!empty($parm['escursioni_menu_count'])) {
@@ -16,34 +15,22 @@ if (!empty($escursioni_prefs['escursioni_menu_global_limit'])) {
 $sql = e107::getDb();
 $tp  = e107::getParser();
 $ns  = e107::getRender();
-
-$sc = e107::getScBatch('escursioni', true, 'escursioni');
+$sc  = e107::getScBatch('escursioni', true, 'escursioni');
 $template = e107::getTemplate('escursioni', 'escursioni', 'menu');
-
 $menu_text = "";
 
-// 2. Stampiamo l'inizio del contenitore generale
 $menu_text .= $tp->parseTemplate($template['start'], true, $sc);
 
-// 3. Recuperiamo i record dal database
 $rows = $sql->retrieve('escursioni', '*', "WHERE 1 ORDER BY ex_id DESC LIMIT 0, {$limit}", true);
 
-if(!empty($rows))
-{
-    foreach($rows as $key => $value)
-    {
-        // Pulito al massimo: la separazione la fa già la classe border-bottom dell'item
+if(!empty($rows)) {
+    foreach($rows as $key => $value) {
         $sc->setVars($value);
         $menu_text .= $tp->parseTemplate($template['item'], true, $sc);
     }
-}
-else
-{
-    $menu_text .= "<div class='text-muted small text-center py-3'>Nessuna escursione disponibile.</div>";
+} else {
+    $menu_text .= "<div class='text-muted small text-center py-3'>".$LAN['escursioni_no_available']."</div>";
 }
 
-// 4. Stampiamo la chiusura nativa del contenitore
 $menu_text .= $tp->parseTemplate($template['end'], true, $sc);
-
-// 5. Render finale sul sito
 $ns->tablerender($caption, $menu_text, 'escursioni_menu');
