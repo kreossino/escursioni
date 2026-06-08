@@ -115,8 +115,13 @@ class escursioni_library
 */
 function config()
 {
-    // Rende visibile l'array $LAN caricato da e107::lan()
-    global $LAN;
+    // Carica manualmente il file di lingua
+    $langFile = e_PLUGIN . 'escursioni/languages/' . e_LANGUAGE . '/' . e_LANGUAGE . '_admin.php';
+    $LAN = array();
+    if (file_exists($langFile)) {
+        include($langFile);
+    }
+
 
     // The following is a full explanation of all properties. See below for more concrete example implementations.
     // This array key lets Library Manager search for 'e107_web/lib/example' directory, which should contain the
