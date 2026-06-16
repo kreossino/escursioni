@@ -1,0 +1,51 @@
+/* ==========================================
+   AREA GREENLIME 
+   ========================================== */
+
+/* 1. Navigazione / Menu */
+nav.navbar ul.navbar-nav li.nav-item a.nav-link:hover, 
+nav.navbar ul.navbar-nav li.nav-item.dropdown a.dropdown-toggle:hover,
+nav.navbar ul.navbar-nav li.nav-item.active a.nav-link {
+  color: greenyellow;
+}
+
+/* 2. Sfondi generici */
+div.bg-greenlime, section.bg-greenlime { 
+  background-color: greenyellow; 
+  color: #000;
+}
+
+/* 3. Pulsante personalizzato Bootstrap 5 (Opzione 2: Inversione in Nero) */
+a.btn.btn-greenlime, 
+button.btn.btn-greenlime {
+  background-color: greenyellow;
+  border: 2px solid greenyellow;
+  color: #000;
+  transition: all 0.2s ease-in-out; /* Animazione fluida per l'hover */
+}
+
+/* Stato Hover, Focus e Active del pulsante */
+a.btn.btn-greenlime:hover, a.btn.btn-greenlime:focus, a.btn.btn-greenlime:active,
+button.btn.btn-greenlime:hover, button.btn.btn-greenlime:focus, button.btn.btn-greenlime:active {
+  background-color: #1a1a1a; /* Diventa nero morbido */
+  border-color: greenyellow;  /* Il bordo rimane verde lime */
+  color: greenyellow;         /* Il testo diventa verde lime */
+}
+
+/* 4. Link generici dentro classi "greenlime" */
+.greenlime a {
+  color: greenyellow;
+}
+.greenlime a:hover {
+  color: #fff; 
+}
+
+/* 5. Link dentro sfondo nero */
+.bg-black a {
+  color: greenyellow;
+}
+.bg-black a:hover {
+  color: #fff;
+}
+
+/* ========================================== */

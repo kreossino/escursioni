@@ -14,7 +14,7 @@ class plugin_escursioni_escursioni_shortcodes extends e_shortcode
     private function escursioniImageUrl($value)
     {
         if(empty($value)) return '';
-        return e107::getParser()->thumbUrl($value);
+        return e107::getParser()->thumbUrl($value, array('w'=>500, 'h'=>350, 'crop'=>1));
     }
 
     private function escursioniImageFullUrl($value)

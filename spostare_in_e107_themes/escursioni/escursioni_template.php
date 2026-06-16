@@ -11,33 +11,27 @@ $ESCURSIONI_TEMPLATE['default']['start'] = '
 
 // Il blocco HTML di ogni singola escursione (versione bella, a griglia e con i badge)
 $ESCURSIONI_TEMPLATE['default']['item'] = '
-<div class="col wow animated fadeInUp animation-delay-2" style="animation-duration: 2s;">
-    <div class="card h-100 shadow-sm">
-        
-        <div class="card-body d-flex flex-column">
-            
-            {ESCURSIONI_IMAGE1}
-            
-            <h3 class="card-title h4 text-primary mt-2">{ESCURSIONI_TITLE}</h3>
-            
-            <div class="mb-2">
-                <span class="badge bg-info text-dark">{ESCURSIONI_TYPE}</span>
-                <span class="badge bg-secondary"><i class="far fa-clock"></i> {ESCURSIONI_DURATION}</span>
-                <span class="badge bg-warning text-dark"><i class="fas fa-mountain"></i> {ESCURSIONI_DIFFICULTY}</span>
-            </div>
-            
-            <p class="card-text text-muted">{ESCURSIONI_SHORT_TEXT}</p>
-                                
-            {ESCURSIONI_PDFORVIDEO}
+    <div class="col">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                {ESCURSIONI_IMAGE1}
+                <h3 class="card-title h4 text-primary mt-2">{ESCURSIONI_TITLE}</h3>
+                
+                <div class="mb-2">
+                    <span class="badge bg-info text-dark">{ESCURSIONI_TYPE}</span>
+                    <span class="badge bg-secondary"><i class="far fa-clock"></i> {ESCURSIONI_DURATION}</span>
+                    <span class="badge bg-warning text-dark"><i class="fas fa-mountain"></i> {ESCURSIONI_DIFFICULTY}</span>
+                </div>
+                <p class="card-text text-muted">{ESCURSIONI_SHORT_TEXT}</p>
+		                
+                    {ESCURSIONI_PDFORVIDEO}
 
-            <div class="mt-auto pt-3 d-flex justify-content-end">
-                <a class="btn btn-success btn-greenlime btn-sm" href="{ESCURSIONI_LINK}">Vedi escursione completa</a>
+                <div class="mt-3">
+                    <a class="btn btn-primary btn-sm" href="{ESCURSIONI_LINK}">Vedi escursione completa</a>
+                </div>
             </div>
-            
         </div>
     </div>
-</div>
-
 ';
 
 // Chiusura della griglia Bootstrap finiti i record
@@ -125,8 +119,8 @@ $ESCURSIONI_TEMPLATE['menu']['item'] = '
     <div class="row g-2">
         <div class="col-12 col-md-2">
             <div class="d-flex flex-column gap-1 align-items-start w-100">
-                <span class="badge bg-greenlime text-dark w-100 text-start text-truncate" style="font-size: 0.72rem; padding: 0.35em 0.5em;">{ESCURSIONI_TYPE}</span>
-                <span class="badge bg-dark text-light border w-100 text-start text-truncate" style="font-size: 0.72rem; padding: 0.35em 0.5em;"><i class="far fa-clock"></i> {ESCURSIONI_DURATION}</span>
+                <span class="badge bg-info text-dark w-100 text-start text-truncate" style="font-size: 0.72rem; padding: 0.35em 0.5em;">{ESCURSIONI_TYPE}</span>
+                <span class="badge bg-light text-dark border w-100 text-start text-truncate" style="font-size: 0.72rem; padding: 0.35em 0.5em;"><i class="far fa-clock"></i> {ESCURSIONI_DURATION}</span>
                 <span class="badge bg-warning text-dark w-100 text-start text-truncate" style="font-size: 0.72rem; padding: 0.35em 0.5em;"><i class="fas fa-mountain"></i> {ESCURSIONI_DIFFICULTY}</span>
             </div>
         </div>
