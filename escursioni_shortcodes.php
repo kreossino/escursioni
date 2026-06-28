@@ -79,9 +79,10 @@ class plugin_escursioni_escursioni_shortcodes extends e_shortcode
     
     function sc_escursioni_text() { return e107::getParser()->toHTML($this->var['ex_text'], true, 'constants,bbcode'); }
     
+    // Abilitato il parsing degli shortcode anche nel testo breve
     function sc_escursioni_short_text()
     {
-        $testo_completo = e107::getParser()->toHTML($this->var['ex_text'], true, 'constants,bbcode');
+        $testo_completo = e107::getParser()->toHTML($this->var['ex_text'], true, 'constants,bbcode,shortcodes');
         $testo_pulito   = strip_tags($testo_completo);
         $testo_tagliato = mb_substr($testo_pulito, 0, 150);
         if (mb_strlen($testo_pulito) > 150) $testo_tagliato .= '...';
@@ -113,13 +114,12 @@ class plugin_escursioni_escursioni_shortcodes extends e_shortcode
 
     function sc_escursioni_gallery()
     {
-        global $LAN; // ← OBBLIGATORIO per accedere a $LAN
+        global $LAN; 
         $tp = e107::getParser();
         $items = array();
         $group = 'escursione-'.(int) vartrue($this->var['ex_id']);
         $title = $tp->toAttribute(vartrue($this->var['ex_title']));
         
-        // Testo "Chiudi" localizzato e sicuro per JS
         $lblClose = $tp->toJS(vartrue($LAN['escursioni_sc_lbl_close'], 'Close'));
 
         for($i = 1; $i <= 4; $i++) {
@@ -147,7 +147,7 @@ class plugin_escursioni_escursioni_shortcodes extends e_shortcode
 </style>
 <script>
 (function(){
-    var lblClose = '{$lblClose}'; // ← Variabile JS definita correttamente
+    var lblClose = '{$lblClose}'; 
     function initEscursioniFallback(){
         if(window.escursioniFallbackReady) return;
         window.escursioniFallbackReady = true;
@@ -236,5 +236,46 @@ class plugin_escursioni_escursioni_shortcodes extends e_shortcode
             $download_name = $slug_title . '.' . $extension;
             return "<div class='mt-4 escursioni-attachment'><a href='{$file_url}' download='{$download_name}' class='btn btn-danger btn-sm' target='_blank'><i class='fas fa-file-pdf'></i> ".e107::getParser()->toHTML($LAN['escursioni_sc_pdf_btn'])."</a></div>";
         }
+    }
+
+    /**
+     * Shortcode per immagini responsive con lightbox integrato nel plugin
+     * Uso: {IMAGE_RESPONSIVE_ESCURSIONI: src=immagine.jpg&width=12&lightbox=1}
+     */
+    function sc_image_responsive_escursioni($parm = '')
+    {
+        $tp = e107::getParser();
+        $parms = eHelper::scParams($parm);
+        
+        $src = trim(vartrue($parms['src'], ''), '"\' ');
+        $width = vartrue($parms['width'], 12); 
+        $lightbox = vartrue($parms['lightbox'], 0);
+        $alt = vartrue($parms['alt'], 'Immagine escursione');
+        $class = vartrue($parms['class'], '');
+        
+        if (empty($src)) {
+            return '';
+        }
+        
+        if (strpos($src, 'http') !== 0 && strpos($src, '{') !== 0) {
+            $src = '{e_MEDIA_IMAGE}' . $src;
+        }
+        
+        $imageSrc = $tp->replaceConstants($src, 'abs');
+        $colClass = 'col-12 col-md-' . (int)$width;
+        
+        $html = '<div class="' . $colClass . ' mb-4 ' . $class . '">';
+        
+        if ($lightbox == 1) {
+            $html .= '<a href="' . $imageSrc . '" data-gal="prettyPhoto[escursioni]">';
+            $html .= '<img src="' . $imageSrc . '" alt="' . $tp->toAttribute($alt) . '" class="img-fluid rounded shadow-sm hover-zoom" />';
+            $html .= '</a>';
+        } else {
+            $html .= '<img src="' . $imageSrc . '" alt="' . $tp->toAttribute($alt) . '" class="img-fluid rounded shadow-sm" />';
+        }
+        
+        $html .= '</div>';
+        
+        return $html;
     }
 }

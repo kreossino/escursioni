@@ -48,8 +48,105 @@ class escursioni_front
 
         $text .= $tp->parseTemplate($template['start'], true, $sc);
 
-        if(!empty($rows)) {
+/*kreos da qui*/
+
+if(!empty($rows)) {
             foreach($rows as $key => $value) {
+                
+                // Controllo manuale: se nel testo c'è lo shortcode, lo compiliamo a forza prima dei tag [html]
+                if(strpos($value['ex_text'], '{IMAGE_RESPONSIVE_ESCURSIONI:') !== false) {
+                    $value['ex_text'] = preg_replace_callback('/\{IMAGE_RESPONSIVE_ESCURSIONI:\s*([^}]+)\}/', function($matches) use ($tp) {
+                        $parms = eHelper::scParams($matches[1]);
+                        
+                        $src = trim(vartrue($parms['src'], ''), '"\' ');
+                        $width = vartrue($parms['width'], 12); 
+                        $lightbox = vartrue($parms['lightbox'], 0);
+                        $alt = vartrue($parms['alt'], 'Immagine escursione');
+                        $class = vartrue($parms['class'], '');
+                        
+                        if (empty($src)) return '';
+                        
+                        // Se l'immagine non è un URL remoto, cerchiamola sul server
+                        if (strpos($src, 'http') !== 0 && strpos($src, '{') !== 0) {
+                            
+                            $filename = basename($src); // Isola il nome del file (es. telefono_1.png)
+                            
+                            // Risolviamo il percorso fisico reale della cartella images di e107
+                            // Trasformiamo '{e_MEDIA_IMAGE}' o la costante nel path reale del server
+                            $raw_media_path = defined('e_MEDIA_IMAGE') ? e_MEDIA_IMAGE : 'e107_media/images/';
+                            $resolved_media_dir = $tp->replaceConstants($raw_media_path, 'full'); 
+                            
+                            // Definiamo la cartella di partenza assoluta sul server per la funzione glob
+                            $server_root_dir = e_BASE . ltrim(str_replace(SITEURL, '', $resolved_media_dir), '/');
+                            
+                            
+/*da qui kreos*/
+// Prepariamo le varianti dell'estensione (es. jpg, JPG, jpeg, JPEG, png, PNG)
+                            $ext = pathinfo($filename, PATHINFO_EXTENSION);
+                            $base_name = pathinfo($filename, PATHINFO_FILENAME);
+                            
+                            if(!empty($ext)) {
+                                $ext_pattern = '{' . strtolower($ext) . ',' . strtoupper($ext) . '}';
+                                $search_filename = $base_name . '.' . $ext_pattern;
+                            } else {
+                                $search_filename = $filename;
+                            }
+
+                            // Pattern di ricerca ricorsivo con supporto GLOB_BRACE
+                            $search_patterns = array(
+                                $server_root_dir . $search_filename,
+                                $server_root_dir . '*/' . $search_filename,
+                                $server_root_dir . '*/*/' . $search_filename,
+                                $server_root_dir . '*/*/*/' . $search_filename
+                            );
+                            
+                            $file_found = false;
+                            foreach($search_patterns as $pattern) {
+                                // Il flag GLOB_BRACE permette di cercare le varianti dentro le parentesi graffe {}
+                                $matches_glob = glob($pattern, GLOB_BRACE);                        
+/* a qui */
+
+        if(!empty($matches_glob)) {
+                                    // Abbiamo trovato il file sul server! Convertiamo il percorso assoluto in URL pulito
+                                    $relative_url = str_replace(e_BASE, '', $matches_glob[0]);
+                                    $src = SITEURL . ltrim($relative_url, '/');
+                                    $file_found = true;
+                                    break;
+                                }
+                            }
+                            
+                            // Fallback se glob non trova nulla: proviamo a lasciarlo gestire a e107
+                            if(!$file_found) {
+                                $src = $tp->replaceConstants('{e_MEDIA_IMAGE}' . $src, 'abs');
+                            }
+                        } else {
+                            // Se conteneva già costanti o http, lo convertiamo normalmente in URL assoluto
+                            $src = $tp->replaceConstants($src, 'abs');
+                        }
+                        
+                        // Forza l'URL ad essere assoluto rispetto al sito se è saltato fuori relativo
+                        if (strpos($src, 'http') !== 0 && strpos($src, '/') !== 0) {
+                            $src = SITEURL . $src;
+                        }
+                        
+                        $imageSrc = $src;
+                        $colClass = 'col-12 col-md-' . (int)$width;
+                        
+                        // Generazione dell'HTML finale compatibile con Bootstrap 5
+                        $html = '<div class="' . $colClass . ' mb-4 ' . $class . '">';
+                        if ($lightbox == 1) {
+                            $html .= '<a href="' . $imageSrc . '" data-gal="prettyPhoto[escursioni]">';
+                            $html .= '<img src="' . $imageSrc . '" alt="' . $tp->toAttribute($alt) . '" class="img-fluid rounded shadow-sm hover-zoom" />';
+                            $html .= '</a>';
+                        } else {
+                            $html .= '<img src="' . $imageSrc . '" alt="' . $tp->toAttribute($alt) . '" class="img-fluid rounded shadow-sm" />';
+                        }
+                        $html .= '</div>';
+                        
+                        return $html;
+                    }, $value['ex_text']);
+                }
+
                 $sc->setVars($value);
                 $text .= $tp->parseTemplate($template['item'], true, $sc);
             }
@@ -60,6 +157,12 @@ class escursioni_front
         $text .= $tp->parseTemplate($template['end'], true, $sc);
         $ns->tablerender($LAN['escursioni_front_title'], $text);
     }
+
+
+
+
+/* a qui*/
+
 }
 
 $escursioniFront = new escursioni_front;
